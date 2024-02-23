@@ -32,7 +32,7 @@ void Image2RTSPNodelet::onInit() {
     XmlRpc::XmlRpcValue streams;
     nh.getParam("streams", streams);
     ROS_ASSERT(streams.getType() == XmlRpc::XmlRpcValue::TypeStruct);
-    ROS_DEBUG("Number of RTSP streams: %d", streams.size());
+    ROS_INFO("Number of RTSP streams: %d", streams.size());
     nh.getParam("port", this->port);
 
     video_mainloop_start();
@@ -42,7 +42,7 @@ void Image2RTSPNodelet::onInit() {
     for(XmlRpc::XmlRpcValue::ValueStruct::const_iterator it = streams.begin(); it != streams.end(); ++it)
     {
         XmlRpc::XmlRpcValue stream = streams[it->first];
-        ROS_DEBUG_STREAM("Found stream: " << (std::string)(it->first) << " ==> " << stream);
+        ROS_INFO_STREAM("Found stream: " << (std::string)(it->first) << " ==> " << stream);
 
         // Convert to string for ease of use
         mountpoint = static_cast<std::string>(stream["mountpoint"]);
@@ -159,6 +159,7 @@ void Image2RTSPNodelet::url_connected(string url) {
 
             if (num_of_clients[url]==0) {
                 // Subscribe to the ROS topic
+                ROS_WARN("Subscribing to %s", source.c_str());
                 subs[url] = nh.subscribe<sensor_msgs::Image>(source, 1, boost::bind(&Image2RTSPNodelet::imageCallback, this, boost::placeholders::_1, url));
             }
             num_of_clients[url]++;
